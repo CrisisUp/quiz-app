@@ -247,10 +247,11 @@ def _sanitize_latex_for_speech(text: str) -> str:
     out = re.sub(r"\\lceil\s*([^\\]+)\s*\\rceil", r"teto de \1", out)
 
     # 6c. Fatorial: n! -> "n fatorial" (mas não confundir com negação lógica)
-    # Fatorial aparece após número ou variável, não após operador relacional
+    # Fatorial aparece após: número, variável única (início de palavra), ou fecha parêntese/colchete/chave
+    # NÃO após letras no meio de palavra (ex: "Correto!" não é fatorial)
     # Múltiplos ! (fatorial duplo, triplo) -> "n fatorial duplo", etc.
     def _factorial_repl(m: re.Match) -> str:
-        base = m.group(1)
+        base = m.group(1) or m.group(2)
         excl_count = len(m.group(0)) - len(base)
         if excl_count == 1:
             return f"{base} fatorial"
@@ -261,7 +262,9 @@ def _sanitize_latex_for_speech(text: str) -> str:
         else:
             return f"{base} fatorial {excl_count} vezes"
 
-    out = re.sub(r"([a-zA-Z0-9\)\]\}])\s*!+", _factorial_repl, out)
+    # Padrão: (letra isolada no início de palavra) OU (dígito/fecha bracket) + !
+    # (?<!\w) garante que a letra não tem letra/dígito/underscore antes
+    out = re.sub(r"(?:(?<!\w)([a-zA-Z])|([0-9\)\]\}]))\s*!+", _factorial_repl, out)
 
     # 7. Letras gregas
     for cmd, spoken in sorted(_GREEK_MAP.items(), key=lambda x: -len(x[0])):
