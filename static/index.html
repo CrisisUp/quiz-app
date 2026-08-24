@@ -366,7 +366,51 @@
     }
     .question-selector select { flex: 1; }
 
-    /* ── Responsive ───────────────────────────────────────────────── */
+    
+/* ── Toolbar ──────────────────────────────────────────────────────── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.toolbar-group.toolbar-nav {
+  flex: 1;
+  min-width: 200px;
+  justify-content: center;
+}
+.toolbar-group.toolbar-audio,
+.toolbar-group.toolbar-actions {
+  flex-shrink: 0;
+}
+.question-selector select {
+  flex: 1;
+  min-width: 150px;
+  padding: .4rem .6rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: .85rem;
+}
+.toolbar-group.toolbar-nav .btn {
+  padding: .5rem .8rem;
+  font-size: .8rem;
+}
+
+
+/* ── Responsive ───────────────────────────────────────────────── */
     @media (max-width: 520px) {
       body { padding: 1rem .6rem; }
       .card { padding: 1.3rem; }
@@ -408,46 +452,52 @@
   </main>
 
   <!-- ═══ Navigation ═════════════════════════════════════════════════ -->
-  <div class="nav-bar" id="navBar" style="display:none">
-    <button class="btn" id="btnPrev" title="Questão anterior (←)" disabled>
-      ← Anterior
-    </button>
-    <div class="question-selector">
-      <label for="questionSelect" style="font-size:0.8rem;color:var(--muted)">Ir para:</label>
-      <select id="questionSelect" style="padding:0.4rem 0.6rem;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:0.85rem"></select>
+  <!-- ═══ Toolbar (unified: audio + navigation + actions) ════════ -->
+  <div class="toolbar" id="toolbar" style="display:none">
+    <!-- Audio group (left) -->
+    <div class="toolbar-group toolbar-audio">
+      <button class="btn" id="btnSpeak" title="Ouvir a questão (R)">
+        🔊 Ouvir <kbd>R</kbd>
+      </button>
+      <button class="btn" id="btnStop" title="Parar áudio">
+        ⏹ Parar
+      </button>
     </div>
-    <button class="btn" id="btnNextNav" title="Próxima questão (→)">
-      Próxima →
-    </button>
+
+    <!-- Navigation group (center) -->
+    <div class="toolbar-group toolbar-nav">
+      <button class="btn" id="btnPrev" title="Questão anterior (←)" disabled>
+        ← Ant
+      </button>
+      <div class="question-selector">
+        <select id="questionSelect" title="Escolher questão"></select>
+      </div>
+      <button class="btn" id="btnNextNav" title="Próxima questão (→)">
+        Próx →
+      </button>
+    </div>
+
+    <!-- Action group (right) -->
+    <div class="toolbar-group toolbar-actions">
+      <button class="btn btn-primary" id="btnConfirm" title="Confirmar resposta (Enter)" disabled>
+        ✔ Confirmar <kbd>Enter</kbd>
+      </button>
+      <button class="btn btn-success" id="btnNext" title="Próxima questão (Enter)" style="display:none">
+        ➜ Próxima <kbd>Enter</kbd>
+      </button>
+    </div>
   </div>
 
-  <!-- ═══ Controls ═════════════════════════════════════════════════ -->
-  <div class="controls" id="controls" style="display:none">
-    <button class="btn" id="btnSpeak" title="Ouvir a questão (R)">
-      🔊 Ouvir <kbd>R</kbd>
-    </button>
-    <button class="btn" id="btnStop" title="Parar áudio">
-      ⏹ Parar
-    </button>
-    <button class="btn btn-primary" id="btnConfirm" title="Confirmar resposta (Enter)" disabled>
-      ✔ Confirmar <kbd>Enter</kbd>
-    </button>
-    <button class="btn btn-success" id="btnNext" title="Próxima questão (Enter)" style="display:none">
-      ➜ Próxima <kbd>Enter</kbd>
-    </button>
-  </div>
-
-  <!-- ═══ Keyboard hints ════════════════════════════════════════════ -->
+  <!-- ═══ Keyboard hints ══════════════════════════════════ -->
   <div class="keyboard-hint" id="keyboardHint" style="display:none">
     <kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd> <kbd>D</kbd> selecionar &nbsp;·&nbsp;
     <kbd>R</kbd> / <kbd>Espaço</kbd> ouvir &nbsp;·&nbsp;
+    <kbd>← →</kbd> navegar &nbsp;·&nbsp;
     <kbd>Enter</kbd> confirmar / próxima
   </div>
 
-  <!-- ═══ Hidden audio ══════════════════════════════════════════════ -->
-  <audio id="audioPlayer"></audio>
-
-  <!-- ═══ JavaScript ════════════════════════════════════════════════ -->
+  <!-- ═══ Hidden audio ═══════════════════════════════════════════════ -->
+  <audio id="audioPlayer"></audio>════════════════════════════════════════ -->
   <script>
     "use strict";
 
@@ -457,6 +507,7 @@
     const $results     = document.getElementById("resultsState");
     const $controls    = document.getElementById("controls");
     const $hint        = document.getElementById("keyboardHint");
+    const $toolbar      = document.getElementById("toolbar");
     const $progressFill= document.getElementById("progressBarFill");
     const $progressTxt = document.getElementById("progressText");
     const $scoreText   = document.getElementById("scoreText");
@@ -533,7 +584,7 @@
       $results.style.display = "none";
       $controls.style.display = "flex";
       $hint.style.display = "block";
-      $navBar.style.display = "flex";
+      $toolbar.style.display = "flex";
 
       $btnConfirm.style.display = "inline-flex";
       $btnConfirm.disabled = true;
