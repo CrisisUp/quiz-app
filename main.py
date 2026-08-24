@@ -55,6 +55,20 @@ _GREEK_MAP: dict[str, str] = {
     r"\Psi": "psi maiúsculo",
     r"\omega": "ômega",
     r"\Omega": "ômega maiúsculo",
+
+    # Funções trigonométricas e hiperbólicas
+    r"\sin": "seno",
+    r"\cos": "cosseno",
+    r"\tan": "tangente",
+    r"\sec": "secante",
+    r"\csc": "cossecante",
+    r"\cot": "cotangente",
+    r"\arcsin": "arco seno",
+    r"\arccos": "arco cosseno",
+    r"\arctan": "arco tangente",
+    r"\sinh": "seno hiperbólico",
+    r"\cosh": "cosseno hiperbólico",
+    r"\tanh": "tangente hiperbólica",
 }
 
 
