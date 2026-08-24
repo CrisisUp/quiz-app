@@ -254,6 +254,105 @@
       line-height: 1.6;
     }
 
+    /* ── Question Card ─────────────────────────────────────────────── */
+    .question-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .question-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      padding-bottom: .75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .question-category {
+      font-size: .7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--accent);
+      background: rgba(108,140,255,.12);
+      padding: .2rem .6rem;
+      border-radius: 999px;
+    }
+    .question-number {
+      font-size: .85rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .question-text {
+      font-size: 1.15rem;
+      font-weight: 500;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── Options ───────────────────────────────────────────────────── */
+    .options { display: flex; flex-direction: column; gap: .65rem; }
+    .option-btn {
+      display: flex;
+      align-items: center;
+      gap: .85rem;
+      width: 100%;
+      text-align: left;
+      padding: 1rem 1.1rem;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: border-color .2s, background .2s, transform .1s, box-shadow .2s;
+    }
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: rgba(108,140,255,.08);
+      box-shadow: 0 4px 12px rgba(108,140,255,.15);
+    }
+    .option-btn:active:not(:disabled) { transform: scale(.985); }
+    .option-btn .letter {
+      flex-shrink: 0;
+      width: 36px; height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: var(--border);
+      font-weight: 700;
+      font-size: .9rem;
+      transition: background .2s, color .2s;
+    }
+    .option-btn.selected {
+      border-color: var(--accent);
+      background: rgba(108,140,255,.12);
+    }
+    .option-btn.selected .letter {
+      background: var(--accent);
+      color: #fff;
+    }
+    .option-btn.correct {
+      border-color: var(--success);
+      background: var(--success-bg);
+    }
+    .option-btn.correct .letter {
+      background: var(--success);
+      color: #fff;
+    }
+    .option-btn.wrong {
+      border-color: var(--danger);
+      background: var(--danger-bg);
+    }
+    .option-btn.wrong .letter {
+      background: var(--danger);
+      color: #fff;
+    }
+    .option-btn:disabled { cursor: default; opacity: .85; }
+
     /* ── Keyboard hint ────────────────────────────────────────────── */
     .keyboard-hint {
       margin-top: 2rem;
@@ -464,313 +563,9 @@
   </div>
 
   <!-- ═══ Hidden audio ═══════════════════════════════════════════════ -->
-  <audio id="audioPlayer"></audio>════════════════════════════════════════ -->
-  <script>
-    "use strict";
-
-    /* ── DOM refs ─────────────────────────────────────────────────── */
-    const $loading     = document.getElementById("loadingState");
-    const $quiz        = document.getElementById("quizState");
-    const $results     = document.getElementById("resultsState");
-    const $controls    = document.getElementById("controls");
-    const $hint        = document.getElementById("keyboardHint");
-    const $toolbar      = document.getElementById("toolbar");
-    const $progressFill= document.getElementById("progressBarFill");
-    const $progressTxt = document.getElementById("progressText");
-    const $scoreText   = document.getElementById("scoreText");
-    const $scoreBadge  = document.getElementById("scoreBadge");
-    const $btnSpeak    = document.getElementById("btnSpeak");
-    const $btnStop     = document.getElementById("btnStop");
-    const $btnConfirm  = document.getElementById("btnConfirm");
-    const $btnNext     = document.getElementById("btnNext");
-    const $btnPrev     = document.getElementById("btnPrev");
-    const $btnNextNav  = document.getElementById("btnNextNav");
-    const $questionSel = document.getElementById("questionSelect");
-    const $audio       = document.getElementById("audioPlayer");
-
-    /* ── State ────────────────────────────────────────────────────── */
-    let questoes   = [];
-    let idx        = 0;
-    let score      = 0;
-    let selected   = null;   // letra selected
-    let answered   = false;
-    let currentTxt = "";     // text to read via TTS
-
-    /* ── Helpers ──────────────────────────────────────────────────── */
-    function renderKaTeX(el) {
-      if (typeof renderMathInElement === "function") {
-        renderMathInElement(el, {
-          delimiters: [
-            { left: "$$", right: "$$", display: true  },
-            { left: "$",  right: "$",  display: false },
-          ],
-          throwOnError: false,
-        });
-      }
-    }
-
-    function buildTTS(base) {
-      const txt = base.replace(/\$/g, " ");
-      return `/api/tts?texto=${encodeURIComponent(txt)}`;
-    }
-
-    function speak(text) {
-      const url = buildTTS(text);
-      $audio.src = url;
-      $audio.load(); // Garante carregamento completo antes do play
-      $audio.oncanplaythrough = () => $audio.play().catch(() => {});
-    }
-
-    function stopAudio() {
-      $audio.pause();
-      $audio.oncanplaythrough = null;
-      $audio.removeAttribute("src");
-      $audio.load();
-    }
-
-    function updateProgress() {
-      const pct = ((idx) / questoes.length) * 100;
-      $progressFill.style.width = pct + "%";
-      $progressTxt.textContent  = `Questão ${Math.min(idx + 1, questoes.length)} de ${questoes.length}`;
-    }
-
-    function updateScore() {
-      $scoreText.textContent = `${score} corret${score === 1 ? "a" : "as"}`;
-    }
-
-    /* ── Render question ──────────────────────────────────────────── */
-    function render() {
-      if (idx >= questoes.length) return showResults();
-
-      const q       = questoes[idx];
-      selected      = null;
-      answered      = false;
-      currentTxt    = q.pergunta;
-
-      $quiz.style.display = "block";
-      $results.style.display = "none";
-      $controls.style.display = "flex";
-      $hint.style.display = "block";
-      $toolbar.style.display = "flex";
-
-      $btnConfirm.style.display = "inline-flex";
-      $btnConfirm.disabled = true;
-      $btnNext.style.display    = "none";
-
-      updateNavigation();
-
-      let html = `<div class="category">${q.categoria}</div>`;
-      html += `<div class="question-text">${q.pergunta}</div>`;
-      html += `<div class="options" id="optionsList">`;
-
-      for (const o of q.opcoes) {
-        html += `
-          <button class="option-btn" data-letra="${o.letra}" tabindex="0">
-            <span class="letter">${o.letra}</span>
-            <span class="texto">${o.texto}</span>
-          </button>`;
-      }
-      html += `</div>`;
-      html += `<div id="explanation"></div>`;
-
-      $quiz.innerHTML = html;
-      renderKaTeX($quiz);
-
-      /* bind option clicks */
-      document.querySelectorAll(".option-btn").forEach((btn) => {
-        btn.addEventListener("click", () => selectOption(btn.dataset.letra));
-      });
-
-      updateProgress();
-    }
-
-    /* ── Navigation ─────────────────────────────────────────────────── */
-    function updateNavigation() {
-      $btnPrev.disabled = idx === 0;
-      $btnNextNav.disabled = idx === questoes.length - 1;
-      $questionSel.value = idx;
-    }
-
-    function goToQuestion(newIdx) {
-      if (newIdx < 0 || newIdx >= questoes.length) return;
-      idx = newIdx;
-      render();
-    }
-
-    function prevQuestion() {
-      if (idx > 0) goToQuestion(idx - 1);
-    }
-
-    function nextQuestionNav() {
-      if (idx < questoes.length - 1) goToQuestion(idx + 1);
-    }
-
-    function populateQuestionSelector() {
-      $questionSel.innerHTML = "";
-      questoes.forEach((q, i) => {
-        const opt = document.createElement("option");
-        opt.value = i;
-        opt.textContent = `${i + 1}. ${q.categoria}`;
-        $questionSel.appendChild(opt);
-      });
-      $questionSel.value = idx;
-    }
-
-    /* ── Select / Confirm ─────────────────────────────────────────── */
-    function selectOption(letra) {
-      if (answered) return;
-
-      selected = letra;
-
-      document.querySelectorAll(".option-btn").forEach((b) => {
-        b.classList.remove("selected");
-        if (b.dataset.letra === letra) b.classList.add("selected");
-      });
-
-      $btnConfirm.disabled = false;
-    }
-
-    function confirmAnswer() {
-      if (answered || selected === null) return;
-
-      answered = true;
-      const q       = questoes[idx];
-      const correta = q.resposta === selected;
-
-      if (correta) score++;
-      updateScore();
-
-      /* lock buttons */
-      document.querySelectorAll(".option-btn").forEach((b) => {
-        b.disabled = true;
-        b.classList.remove("selected");
-        if (b.dataset.letra === q.resposta) b.classList.add("correct");
-        if (b.dataset.letra === selected && !correta) b.classList.add("wrong");
-      });
-
-      /* Build speech text */
-      const optCorreta = q.opcoes.find(o => o.letra === q.resposta);
-      let fala;
-      if (correta) {
-        fala = `Correto! A alternativa ${q.resposta}: ${optCorreta.texto}. ${q.explicacao}`;
-      } else {
-        fala = `Incorreto. A resposta certa é a alternativa ${q.resposta}: ${optCorreta.texto}. ${q.explicacao}`;
-      }
-
-      /* explanation (visual) */
-      const $expl = document.getElementById("explanation");
-      $expl.innerHTML = `
-        <div class="explanation ${correta ? "correct-expl" : "wrong-expl"}">
-          <strong>${correta ? "✅ Correto!" : "❌ Incorreto"}</strong>
-          ${q.explicacao}
-        </div>`;
-      renderKaTeX($expl);
-
-      /* Speak result immediately */
-      currentTxt = fala;
-      speak(fala);
-
-      /* toggle buttons */
-      $btnConfirm.style.display = "none";
-      $btnNext.style.display    = "inline-flex";
-      $btnNext.focus();
-    }
-
-    function nextQuestion() {
-      idx++;
-      render();
-    }
-
-    /* ── Results ──────────────────────────────────────────────────── */
-    function showResults() {
-      $quiz.style.display     = "none";
-      $controls.style.display = "none";
-      $hint.style.display     = "none";
-      $results.style.display  = "block";
-      $progressFill.style.width = "100%";
-      $progressTxt.textContent  = "Concluído!";
-
-      const pct = Math.round((score / questoes.length) * 100);
-      let msg;
-      if (pct === 100)      msg = "🏆 Perfeito! Você dominou todas as questões!";
-      else if (pct >= 70)   msg = "👏 Muito bem! Você tem um bom domínio do assunto.";
-      else if (pct >= 40)   msg = "📚 Continue estudando, você está no caminho certo!";
-      else                  msg = "💪 Não desista! Revise o conteúdo e tente novamente.";
-
-      $results.innerHTML = `
-        <div class="category">Resultado Final</div>
-        <div class="big-score"><span>${score}</span>/${questoes.length}</div>
-        <div class="label">${pct}% de acerto</div>
-        <div class="message">${msg}</div>
-        <button class="btn btn-primary" onclick="restart()" style="margin:0 auto">
-          🔄 Reiniciar Quiz
-        </button>`;
-    }
-
-    function restart() {
-      idx = 0;
-      score = 0;
-      updateScore();
-      render();
-    }
-
-    /* ── Keyboard ─────────────────────────────────────────────────── */
-    document.addEventListener("keydown", (e) => {
-      /* Ignore when typing in inputs */
-      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
-
-      const k = e.key.toUpperCase();
-
-      if (["A", "B", "C", "D"].includes(k) && !answered) {
-        e.preventDefault();
-        selectOption(k);
-        return;
-      }
-
-      if (k === "R" || e.key === " ") {
-        e.preventDefault();
-        if (currentTxt) speak(currentTxt);
-        return;
-      }
-
-      if (k === "ENTER") {
-        e.preventDefault();
-        if (answered) nextQuestion();
-        else          confirmAnswer();
-      }
-      if (k === "ARROWLEFT" || k === "LEFT") {
-        e.preventDefault();
-        prevQuestion();
-      }
-      if (k === "ARROWRIGHT" || k === "RIGHT") {
-        e.preventDefault();
-        nextQuestionNav();
-      }
-    });
-
-    /* ── Button handlers ──────────────────────────────────────────── */
-    $btnSpeak.addEventListener("click", () => { if (currentTxt) speak(currentTxt); });
-    $btnStop.addEventListener("click",  stopAudio);
-    $btnConfirm.addEventListener("click", confirmAnswer);
-    $btnNext.addEventListener("click", nextQuestion);
-    $btnPrev.addEventListener("click", prevQuestion);
-    $btnNextNav.addEventListener("click", nextQuestionNav);
-    $questionSel.addEventListener("change", (e) => goToQuestion(parseInt(e.target.value, 10)));
-
-    /* ── Init ─────────────────────────────────────────────────────── */
-    (async () => {
-      try {
-        const res = await fetch("/api/questoes");
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        questoes = await res.json();
-        populateQuestionSelector();
-        updateScore();
-        render();
-      } catch (err) {
-        $loading.innerHTML = `❌ Falha ao carregar questões: ${err.message}`;
-      }
-    })();
-  </script>
+  <!-- ═══ Hidden audio ══════════════════════════════════════════════ -->
+  <audio id="audioPlayer"></audio>
+  <script type="module" src="/static/js/quiz-app.js"></script>
 
 </body>
 </html>
