@@ -221,52 +221,6 @@
     }
     .explanation strong { display: block; margin-bottom: .3rem; }
 
-    /* ── Controls ─────────────────────────────────────────────────── */
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: .6rem;
-      margin-top: 1.5rem;
-      width: 100%;
-      max-width: 680px;
-    }
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: .45rem;
-      padding: .65rem 1.15rem;
-      border-radius: 8px;
-      border: 1.5px solid var(--border);
-      background: var(--surface);
-      color: var(--text);
-      font-size: .85rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: border-color .2s, background .2s;
-    }
-    .btn:hover { border-color: var(--accent); background: rgba(108,140,255,.08); }
-    .btn:disabled { opacity: .4; cursor: default; }
-    .btn kbd {
-      display: inline-block;
-      background: var(--border);
-      border-radius: 4px;
-      padding: .1rem .4rem;
-      font-size: .7rem;
-      font-family: inherit;
-      font-weight: 700;
-    }
-    .btn-primary {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fff;
-    }
-    .btn-primary:hover { background: var(--accent-h); border-color: var(--accent-h); }
-    .btn-success {
-      background: var(--success);
-      border-color: var(--success);
-      color: #0f1117;
-    }
-
     /* ── Audio indicator ──────────────────────────────────────────── */
     .audio-pulse {
       display: inline-block;
@@ -343,30 +297,6 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Navigation Bar ────────────────────────────────────────────── */
-    .nav-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-      padding: 1rem;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      flex-wrap: wrap;
-    }
-    .nav-bar .btn { flex-shrink: 0; }
-    .question-selector {
-      flex: 1;
-      min-width: 180px;
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-    }
-    .question-selector select { flex: 1; }
-
-    
 /* ── Toolbar ──────────────────────────────────────────────────────── */
 .toolbar {
   display: flex;
@@ -415,8 +345,45 @@
       body { padding: 1rem .6rem; }
       .card { padding: 1.3rem; }
       .question-text { font-size: 1rem; }
-      .controls { gap: .45rem; }
       .btn { padding: .55rem .85rem; font-size: .8rem; }
+
+      /* Toolbar mobile adjustments */
+      .toolbar {
+        flex-direction: column;
+        gap: .75rem;
+        padding: .75rem;
+      }
+      .toolbar-group {
+        width: 100%;
+        justify-content: center;
+        gap: .4rem;
+      }
+      .toolbar-group.toolbar-nav {
+        order: 2;
+        min-width: 0;
+      }
+      .toolbar-group.toolbar-audio {
+        order: 1;
+      }
+      .toolbar-group.toolbar-actions {
+        order: 3;
+      }
+      .question-selector {
+        width: 100%;
+      }
+      .question-selector select {
+        width: 100%;
+        min-width: 0;
+        font-size: .9rem;
+      }
+      .toolbar-group.toolbar-nav .btn {
+        padding: .5rem .75rem;
+        font-size: .75rem;
+      }
+      .toolbar-group .btn {
+        padding: .5rem .75rem;
+        font-size: .8rem;
+      }
     }
   </style>
 </head>
