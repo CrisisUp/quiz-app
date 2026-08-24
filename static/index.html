@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Interativo</title>
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"></script>
+
+  <style>
+    /* ── Reset ────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Design tokens ────────────────────────────────────────────── */
+    :root {
+      --bg:        #0f1117;
+      --surface:   #1a1d27;
+      --border:    #2a2d3a;
+      --text:      #e2e4ea;
+      --muted:     #8b8fa3;
+      --accent:    #6c8cff;
+      --accent-h:  #8aa4ff;
+      --success:   #34d399;
+      --success-bg:#0d3a2a;
+      --danger:    #f87171;
+      --danger-bg: #3a1515;
+      --radius:    12px;
+      --shadow:    0 8px 32px rgba(0,0,0,.35);
+    }
+
+    /* ── Base ─────────────────────────────────────────────────────── */
+    html { font-size: 16px; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 1rem;
+      line-height: 1.6;
+    }
+
+    /* ── Header ───────────────────────────────────────────────────── */
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+      width: 100%;
+      max-width: 680px;
+    }
+    .header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      margin-bottom: .35rem;
+    }
+    .header p { color: var(--muted); font-size: .9rem; }
+
+    /* ── Progress ─────────────────────────────────────────────────── */
+    .progress-bar-wrap {
+      width: 100%;
+      max-width: 680px;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 3px;
+      transition: width .4s ease;
+    }
+    .progress-text {
+      text-align: center;
+      color: var(--muted);
+      font-size: .85rem;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Score badge ──────────────────────────────────────────────── */
+    .score-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: .35rem 1rem;
+      font-size: .85rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+    }
+    .score-badge .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    /* ── Card ─────────────────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 680px;
+      padding: 2rem;
+      animation: fadeUp .35s ease;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Category chip ────────────────────────────────────────────── */
+    .category {
+      display: inline-block;
+      font-size: .75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--accent);
+      background: rgba(108,140,255,.12);
+      padding: .2rem .7rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Question ─────────────────────────────────────────────────── */
+    .question-text {
+      font-size: 1.15rem;
+      font-weight: 500;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── Options ──────────────────────────────────────────────────── */
+    .options { display: flex; flex-direction: column; gap: .65rem; }
+
+    .option-btn {
+      display: flex;
+      align-items: center;
+      gap: .85rem;
+      width: 100%;
+      text-align: left;
+      padding: .85rem 1.1rem;
+      background: transparent;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: border-color .2s, background .2s, transform .1s;
+    }
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: rgba(108,140,255,.06);
+    }
+    .option-btn:active:not(:disabled) { transform: scale(.985); }
+
+    .option-btn .letter {
+      flex-shrink: 0;
+      width: 32px; height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      background: var(--border);
+      font-weight: 700;
+      font-size: .85rem;
+      transition: background .2s, color .2s;
+    }
+    .option-btn.selected {
+      border-color: var(--accent);
+      background: rgba(108,140,255,.1);
+    }
+    .option-btn.selected .letter {
+      background: var(--accent);
+      color: #fff;
+    }
+    .option-btn.correct {
+      border-color: var(--success);
+      background: var(--success-bg);
+    }
+    .option-btn.correct .letter {
+      background: var(--success);
+      color: #fff;
+    }
+    .option-btn.wrong {
+      border-color: var(--danger);
+      background: var(--danger-bg);
+    }
+    .option-btn.wrong .letter {
+      background: var(--danger);
+      color: #fff;
+    }
+    .option-btn:disabled { cursor: default; opacity: .85; }
+
+    /* ── Explanation ──────────────────────────────────────────────── */
+    .explanation {
+      margin-top: 1.25rem;
+      padding: 1rem 1.15rem;
+      border-radius: var(--radius);
+      font-size: .95rem;
+      line-height: 1.65;
+      animation: fadeUp .3s ease;
+    }
+    .explanation.correct-expl {
+      background: var(--success-bg);
+      border-left: 3px solid var(--success);
+    }
+    .explanation.wrong-expl {
+      background: var(--danger-bg);
+      border-left: 3px solid var(--danger);
+    }
+    .explanation strong { display: block; margin-bottom: .3rem; }
+
+    /* ── Controls ─────────────────────────────────────────────────── */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .6rem;
+      margin-top: 1.5rem;
+      width: 100%;
+      max-width: 680px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      padding: .65rem 1.15rem;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: .85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+    }
+    .btn:hover { border-color: var(--accent); background: rgba(108,140,255,.08); }
+    .btn:disabled { opacity: .4; cursor: default; }
+    .btn kbd {
+      display: inline-block;
+      background: var(--border);
+      border-radius: 4px;
+      padding: .1rem .4rem;
+      font-size: .7rem;
+      font-family: inherit;
+      font-weight: 700;
+    }
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--accent-h); border-color: var(--accent-h); }
+    .btn-success {
+      background: var(--success);
+      border-color: var(--success);
+      color: #0f1117;
+    }
+
+    /* ── Audio indicator ──────────────────────────────────────────── */
+    .audio-pulse {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--danger);
+      animation: pulse .6s infinite alternate;
+    }
+    @keyframes pulse {
+      from { opacity: .4; transform: scale(.8); }
+      to   { opacity: 1;  transform: scale(1.2); }
+    }
+
+    /* ── Results ──────────────────────────────────────────────────── */
+    .results { text-align: center; max-width: 420px; width: 100%; }
+    .results .big-score {
+      font-size: 4.5rem;
+      font-weight: 800;
+      letter-spacing: -.04em;
+      margin: .5rem 0;
+    }
+    .results .big-score span { color: var(--accent); }
+    .results .label {
+      font-size: 1.1rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+    .results .message {
+      font-size: 1.05rem;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    /* ── Keyboard hint ────────────────────────────────────────────── */
+    .keyboard-hint {
+      margin-top: 2rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: .78rem;
+      line-height: 1.7;
+      max-width: 680px;
+      width: 100%;
+    }
+    .keyboard-hint kbd {
+      display: inline-block;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: .1rem .45rem;
+      font-size: .72rem;
+      font-family: inherit;
+      font-weight: 600;
+    }
+
+    /* ── KaTeX overrides ──────────────────────────────────────────── */
+    .katex-display { margin: .6em 0; }
+    .katex { font-size: 1.05em; }
+
+    /* ── Loading ──────────────────────────────────────────────────── */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .6rem;
+      color: var(--muted);
+      padding: 3rem 0;
+    }
+    .spinner {
+      width: 22px; height: 22px;
+      border: 2.5px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Responsive ───────────────────────────────────────────────── */
+    @media (max-width: 520px) {
+      body { padding: 1rem .6rem; }
+      .card { padding: 1.3rem; }
+      .question-text { font-size: 1rem; }
+      .controls { gap: .45rem; }
+      .btn { padding: .55rem .85rem; font-size: .8rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══ Header ═══════════════════════════════════════════════════ -->
+  <header class="header">
+    <h1>🧠 Quiz Interativo</h1>
+    <p>Responda as questões usando o teclado ou o mouse</p>
+  </header>
+
+  <!-- ═══ Progress ══════════════════════════════════════════════════ -->
+  <div class="progress-bar-wrap" id="progressBarWrap">
+    <div class="progress-bar-fill" id="progressBarFill" style="width:0%"></div>
+  </div>
+  <div class="progress-text" id="progressText"></div>
+
+  <!-- ═══ Score badge ═══════════════════════════════════════════════ -->
+  <div class="score-badge" id="scoreBadge">
+    <span class="dot"></span>
+    <span id="scoreText">0 corretas</span>
+  </div>
+
+  <!-- ═══ Main card ═════════════════════════════════════════════════ -->
+  <main class="card" id="mainCard">
+    <div id="loadingState" class="loading">
+      <div class="spinner"></div>
+      Carregando questões…
+    </div>
+    <div id="quizState" style="display:none"></div>
+    <div id="resultsState" class="results" style="display:none"></div>
+  </main>
+
+  <!-- ═══ Controls ══════════════════════════════════════════════════ -->
+  <div class="controls" id="controls" style="display:none">
+    <button class="btn" id="btnSpeak" title="Ouvir a questão (R)">
+      🔊 Ouvir <kbd>R</kbd>
+    </button>
+    <button class="btn" id="btnStop" title="Parar áudio">
+      ⏹ Parar
+    </button>
+    <button class="btn btn-primary" id="btnConfirm" title="Confirmar resposta (Enter)" disabled>
+      ✔ Confirmar <kbd>Enter</kbd>
+    </button>
+    <button class="btn btn-success" id="btnNext" title="Próxima questão (Enter)" style="display:none">
+      ➜ Próxima <kbd>Enter</kbd>
+    </button>
+  </div>
+
+  <!-- ═══ Keyboard hints ════════════════════════════════════════════ -->
+  <div class="keyboard-hint" id="keyboardHint" style="display:none">
+    <kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd> <kbd>D</kbd> selecionar &nbsp;·&nbsp;
+    <kbd>R</kbd> / <kbd>Espaço</kbd> ouvir &nbsp;·&nbsp;
+    <kbd>Enter</kbd> confirmar / próxima
+  </div>
+
+  <!-- ═══ Hidden audio ══════════════════════════════════════════════ -->
+  <audio id="audioPlayer"></audio>
+
+  <!-- ═══ JavaScript ════════════════════════════════════════════════ -->
+  <script>
+    "use strict";
+
+    /* ── DOM refs ─────────────────────────────────────────────────── */
+    const $loading     = document.getElementById("loadingState");
+    const $quiz        = document.getElementById("quizState");
+    const $results     = document.getElementById("resultsState");
+    const $controls    = document.getElementById("controls");
+    const $hint        = document.getElementById("keyboardHint");
+    const $progressFill= document.getElementById("progressBarFill");
+    const $progressTxt = document.getElementById("progressText");
+    const $scoreText   = document.getElementById("scoreText");
+    const $scoreBadge  = document.getElementById("scoreBadge");
+    const $btnSpeak    = document.getElementById("btnSpeak");
+    const $btnStop     = document.getElementById("btnStop");
+    const $btnConfirm  = document.getElementById("btnConfirm");
+    const $btnNext     = document.getElementById("btnNext");
+    const $audio       = document.getElementById("audioPlayer");
+
+    /* ── State ────────────────────────────────────────────────────── */
+    let questoes   = [];
+    let idx        = 0;
+    let score      = 0;
+    let selected   = null;   // letra selected
+    let answered   = false;
+    let currentTxt = "";     // text to read via TTS
+
+    /* ── Helpers ──────────────────────────────────────────────────── */
+    function renderKaTeX(el) {
+      if (typeof renderMathInElement === "function") {
+        renderMathInElement(el, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true  },
+            { left: "$",  right: "$",  display: false },
+          ],
+          throwOnError: false,
+        });
+      }
+    }
+
+    function buildTTS(base) {
+      const txt = base.replace(/\$/g, " ");
+      return `/api/tts?texto=${encodeURIComponent(txt)}`;
+    }
+
+    function speak(text) {
+      const url = buildTTS(text);
+      $audio.src = url;
+      $audio.load(); // Garante carregamento completo antes do play
+      $audio.oncanplaythrough = () => $audio.play().catch(() => {});
+    }
+
+    function stopAudio() {
+      $audio.pause();
+      $audio.oncanplaythrough = null;
+      $audio.removeAttribute("src");
+      $audio.load();
+    }
+
+    function updateProgress() {
+      const pct = ((idx) / questoes.length) * 100;
+      $progressFill.style.width = pct + "%";
+      $progressTxt.textContent  = `Questão ${Math.min(idx + 1, questoes.length)} de ${questoes.length}`;
+    }
+
+    function updateScore() {
+      $scoreText.textContent = `${score} corret${score === 1 ? "a" : "as"}`;
+    }
+
+    /* ── Render question ──────────────────────────────────────────── */
+    function render() {
+      if (idx >= questoes.length) return showResults();
+
+      const q       = questoes[idx];
+      selected      = null;
+      answered      = false;
+      currentTxt    = q.pergunta;
+
+      $quiz.style.display = "block";
+      $results.style.display = "none";
+      $controls.style.display = "flex";
+      $hint.style.display = "block";
+
+      $btnConfirm.style.display = "inline-flex";
+      $btnConfirm.disabled = true;
+      $btnNext.style.display    = "none";
+
+      let html = `<div class="category">${q.categoria}</div>`;
+      html += `<div class="question-text">${q.pergunta}</div>`;
+      html += `<div class="options" id="optionsList">`;
+
+      for (const o of q.opcoes) {
+        html += `
+          <button class="option-btn" data-letra="${o.letra}" tabindex="0">
+            <span class="letter">${o.letra}</span>
+            <span class="texto">${o.texto}</span>
+          </button>`;
+      }
+      html += `</div>`;
+      html += `<div id="explanation"></div>`;
+
+      $quiz.innerHTML = html;
+      renderKaTeX($quiz);
+
+      /* bind option clicks */
+      document.querySelectorAll(".option-btn").forEach((btn) => {
+        btn.addEventListener("click", () => selectOption(btn.dataset.letra));
+      });
+
+      updateProgress();
+    }
+
+    /* ── Select / Confirm ─────────────────────────────────────────── */
+    function selectOption(letra) {
+      if (answered) return;
+
+      selected = letra;
+
+      document.querySelectorAll(".option-btn").forEach((b) => {
+        b.classList.remove("selected");
+        if (b.dataset.letra === letra) b.classList.add("selected");
+      });
+
+      $btnConfirm.disabled = false;
+    }
+
+    function confirmAnswer() {
+      if (answered || selected === null) return;
+
+      answered = true;
+      const q    = questoes[idx];
+      const correta = q.resposta === selected;
+
+      if (correta) score++;
+      updateScore();
+
+      /* lock buttons */
+      document.querySelectorAll(".option-btn").forEach((b) => {
+        b.disabled = true;
+        b.classList.remove("selected");
+        if (b.dataset.letra === q.resposta) b.classList.add("correct");
+        if (b.dataset.letra === selected && !correta) b.classList.add("wrong");
+      });
+
+      /* explanation */
+      const $expl = document.getElementById("explanation");
+      $expl.innerHTML = `
+        <div class="explanation ${correta ? "correct-expl" : "wrong-expl"}">
+          <strong>${correta ? "✅ Correto!" : "❌ Incorreto"}</strong>
+          ${q.explicacao}
+        </div>`;
+      renderKaTeX($expl);
+
+      /* toggle buttons */
+      $btnConfirm.style.display = "none";
+      $btnNext.style.display    = "inline-flex";
+      $btnNext.focus();
+    }
+
+    function nextQuestion() {
+      idx++;
+      render();
+    }
+
+    /* ── Results ──────────────────────────────────────────────────── */
+    function showResults() {
+      $quiz.style.display     = "none";
+      $controls.style.display = "none";
+      $hint.style.display     = "none";
+      $results.style.display  = "block";
+      $progressFill.style.width = "100%";
+      $progressTxt.textContent  = "Concluído!";
+
+      const pct = Math.round((score / questoes.length) * 100);
+      let msg;
+      if (pct === 100)      msg = "🏆 Perfeito! Você dominou todas as questões!";
+      else if (pct >= 70)   msg = "👏 Muito bem! Você tem um bom domínio do assunto.";
+      else if (pct >= 40)   msg = "📚 Continue estudando, você está no caminho certo!";
+      else                  msg = "💪 Não desista! Revise o conteúdo e tente novamente.";
+
+      $results.innerHTML = `
+        <div class="category">Resultado Final</div>
+        <div class="big-score"><span>${score}</span>/${questoes.length}</div>
+        <div class="label">${pct}% de acerto</div>
+        <div class="message">${msg}</div>
+        <button class="btn btn-primary" onclick="restart()" style="margin:0 auto">
+          🔄 Reiniciar Quiz
+        </button>`;
+    }
+
+    function restart() {
+      idx = 0;
+      score = 0;
+      updateScore();
+      render();
+    }
+
+    /* ── Keyboard ─────────────────────────────────────────────────── */
+    document.addEventListener("keydown", (e) => {
+      /* Ignore when typing in inputs */
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+
+      const k = e.key.toUpperCase();
+
+      if (["A", "B", "C", "D"].includes(k) && !answered) {
+        e.preventDefault();
+        selectOption(k);
+        return;
+      }
+
+      if (k === "R" || e.key === " ") {
+        e.preventDefault();
+        if (currentTxt) speak(currentTxt);
+        return;
+      }
+
+      if (k === "ENTER") {
+        e.preventDefault();
+        if (answered) nextQuestion();
+        else          confirmAnswer();
+      }
+    });
+
+    /* ── Button handlers ──────────────────────────────────────────── */
+    $btnSpeak.addEventListener("click", () => { if (currentTxt) speak(currentTxt); });
+    $btnStop.addEventListener("click",  stopAudio);
+    $btnConfirm.addEventListener("click", confirmAnswer);
+    $btnNext.addEventListener("click", nextQuestion);
+
+    /* ── Init ─────────────────────────────────────────────────────── */
+    (async () => {
+      try {
+        const res = await fetch("/api/questoes");
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        questoes = await res.json();
+        updateScore();
+        render();
+      } catch (err) {
+        $loading.innerHTML = `❌ Falha ao carregar questões: ${err.message}`;
+      }
+    })();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,132 @@
+[
+  {
+    "id": 1,
+    "categoria": "Aritmética",
+    "pergunta": "Qual é o resultado de $3^2 + 4^2$?",
+    "opcoes": [
+      {"letra": "A", "texto": "7"},
+      {"letra": "B", "texto": "12"},
+      {"letra": "C", "texto": "25"},
+      {"letra": "D", "texto": "49"}
+    ],
+    "resposta": "C",
+    "explicacao": "$3^2 = 9$ e $4^2 = 16$. Logo, $9 + 16 = 25$."
+  },
+  {
+    "id": 2,
+    "categoria": "Álgebra",
+    "pergunta": "Se $f(x) = 2x + 3$, qual é o valor de $f(5)$?",
+    "opcoes": [
+      {"letra": "A", "texto": "10"},
+      {"letra": "B", "texto": "13"},
+      {"letra": "C", "texto": "15"},
+      {"letra": "D", "texto": "18"}
+    ],
+    "resposta": "B",
+    "explicacao": "Substituindo: $f(5) = 2 \\times 5 + 3 = 10 + 3 = 13$."
+  },
+  {
+    "id": 3,
+    "categoria": "Álgebra",
+    "pergunta": "Qual é a solução da equação $x^2 - 5x + 6 = 0$?",
+    "opcoes": [
+      {"letra": "A", "texto": "$x = 1$ e $x = 6$"},
+      {"letra": "B", "texto": "$x = 2$ e $x = 3$"},
+      {"letra": "C", "texto": "$x = -2$ e $x = -3$"},
+      {"letra": "D", "texto": "$x = 1$ e $x = -6$"}
+    ],
+    "resposta": "B",
+    "explicacao": "Fatorando: $(x - 2)(x - 3) = 0$, logo $x = 2$ ou $x = 3$."
+  },
+  {
+    "id": 4,
+    "categoria": "Geometria",
+    "pergunta": "Qual é a área de um triângulo com base $b = 8$ cm e altura $h = 5$ cm?",
+    "opcoes": [
+      {"letra": "A", "texto": "13 cm²"},
+      {"letra": "B", "texto": "20 cm²"},
+      {"letra": "C", "texto": "40 cm²"},
+      {"letra": "D", "texto": "80 cm²"}
+    ],
+    "resposta": "B",
+    "explicacao": "$A = \\frac{b \\times h}{2} = \\frac{8 \\times 5}{2} = \\frac{40}{2} = 20$ cm²."
+  },
+  {
+    "id": 5,
+    "categoria": "Trigonometria",
+    "pergunta": "Em um triângulo retângulo, se o cateto oposto tem comprimento $3$ e a hipotenusa $5$, qual é o valor de $\\sin(\\theta)$?",
+    "opcoes": [
+      {"letra": "A", "texto": "$\\frac{3}{4}$"},
+      {"letra": "B", "texto": "$\\frac{4}{5}$"},
+      {"letra": "C", "texto": "$\\frac{3}{5}$"},
+      {"letra": "D", "texto": "$\\frac{5}{3}$"}
+    ],
+    "resposta": "C",
+    "explicacao": "$\\sin(\\theta) = \\frac{\\text{cateto oposto}}{\\text{hipotenusa}} = \\frac{3}{5}$."
+  },
+  {
+    "id": 6,
+    "categoria": "Cálculo",
+    "pergunta": "Qual é a derivada de $f(x) = x^3 + 2x$ em relação a $x$?",
+    "opcoes": [
+      {"letra": "A", "texto": "$3x + 2$"},
+      {"letra": "B", "texto": "$x^2 + 2$"},
+      {"letra": "C", "texto": "$3x^2 + 2$"},
+      {"letra": "D", "texto": "$3x^2 + 2x$"}
+    ],
+    "resposta": "C",
+    "explicacao": "Pela regra da potência: $\\frac{d}{dx}(x^3) = 3x^2$ e $\\frac{d}{dx}(2x) = 2$. Logo, $f'(x) = 3x^2 + 2$."
+  },
+  {
+    "id": 7,
+    "categoria": "Física",
+    "pergunta": "Um corpo parte do repouso e acelera uniformemente com $a = 2 \\, \\text{m/s}^2$. Qual é a velocidade após $t = 4 \\, \\text{s}$?",
+    "opcoes": [
+      {"letra": "A", "texto": "$2 \\, \\text{m/s}$"},
+      {"letra": "B", "texto": "$4 \\, \\text{m/s}$"},
+      {"letra": "C", "texto": "$6 \\, \\text{m/s}$"},
+      {"letra": "D", "texto": "$8 \\, \\text{m/s}$"}
+    ],
+    "resposta": "D",
+    "explicacao": "$v = v_0 + at = 0 + 2 \\times 4 = 8 \\, \\text{m/s}$."
+  },
+  {
+    "id": 8,
+    "categoria": "Física",
+    "pergunta": "De acordo com a segunda lei de Newton, se a força resultante sobre um corpo de massa $m = 10 \\, \\text{kg}$ é $F = 50 \\, \\text{N}$, qual é a aceleração?",
+    "opcoes": [
+      {"letra": "A", "texto": "$0,2 \\, \\text{m/s}^2$"},
+      {"letra": "B", "texto": "$5 \\, \\text{m/s}^2$"},
+      {"letra": "C", "texto": "$10 \\, \\text{m/s}^2$"},
+      {"letra": "D", "texto": "$500 \\, \\text{m/s}^2$"}
+    ],
+    "resposta": "B",
+    "explicacao": "$a = \\frac{F}{m} = \\frac{50}{10} = 5 \\, \\text{m/s}^2$."
+  },
+  {
+    "id": 9,
+    "categoria": "Física",
+    "pergunta": "Uma resistência de $R = 10 \\, \\Omega$ é percorrida por uma corrente de $I = 3 \\, \\text{A}$. Qual é a tensão nos terminais?",
+    "opcoes": [
+      {"letra": "A", "texto": "$\\frac{10}{3} \\, \\text{V}$"},
+      {"letra": "B", "texto": "$13 \\, \\text{V}$"},
+      {"letra": "C", "texto": "$30 \\, \\text{V}$"},
+      {"letra": "D", "texto": "$300 \\, \\text{V}$"}
+    ],
+    "resposta": "C",
+    "explicacao": "Lei de Ohm: $V = R \\times I = 10 \\times 3 = 30 \\, \\text{V}$."
+  },
+  {
+    "id": 10,
+    "categoria": "Química",
+    "pergunta": "Qual é a massa molar da água ($\\text{H}_2\\text{O}$)? Considere: $\\text{H} = 1 \\, \\text{g/mol}$ e $\\text{O} = 16 \\, \\text{g/mol}$.",
+    "opcoes": [
+      {"letra": "A", "texto": "$16 \\, \\text{g/mol}$"},
+      {"letra": "B", "texto": "$17 \\, \\text{g/mol}$"},
+      {"letra": "C", "texto": "$18 \\, \\text{g/mol}$"},
+      {"letra": "D", "texto": "$32 \\, \\text{g/mol}$"}
+    ],
+    "resposta": "C",
+    "explicacao": "$M(\\text{H}_2\\text{O}) = 2 \\times 1 + 16 = 18 \\, \\text{g/mol}$."
+  }
+]
