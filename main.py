@@ -134,6 +134,8 @@ def _sanitize_latex_for_speech(text: str) -> str:
         (r"/", " dividido "),
         (r"\-", " menos "),
         (r"-", " menos "),
+        (r"'", " linha "),
+        (r"\prime", " linha "),
     ]
     for pattern, spoken in symbol_map:
         out = out.replace(pattern, spoken)
