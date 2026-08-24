@@ -541,7 +541,7 @@
       if (answered || selected === null) return;
 
       answered = true;
-      const q    = questoes[idx];
+      const q       = questoes[idx];
       const correta = q.resposta === selected;
 
       if (correta) score++;
@@ -555,7 +555,16 @@
         if (b.dataset.letra === selected && !correta) b.classList.add("wrong");
       });
 
-      /* explanation */
+      /* Build speech text */
+      const optCorreta = q.opcoes.find(o => o.letra === q.resposta);
+      let fala;
+      if (correta) {
+        fala = `Correto! A alternativa ${q.resposta}: ${optCorreta.texto}. ${q.explicacao}`;
+      } else {
+        fala = `Incorreto. A resposta certa é a alternativa ${q.resposta}: ${optCorreta.texto}. ${q.explicacao}`;
+      }
+
+      /* explanation (visual) */
       const $expl = document.getElementById("explanation");
       $expl.innerHTML = `
         <div class="explanation ${correta ? "correct-expl" : "wrong-expl"}">
@@ -563,6 +572,10 @@
           ${q.explicacao}
         </div>`;
       renderKaTeX($expl);
+
+      /* Speak result immediately */
+      currentTxt = fala;
+      speak(fala);
 
       /* toggle buttons */
       $btnConfirm.style.display = "none";
