@@ -128,5 +128,173 @@
     ],
     "resposta": "C",
     "explicacao": "$M(\\text{H}_2\\text{O}) = 2 \\times 1 + 16 = 18 \\, \\text{g/mol}$."
+  },
+  {
+    "id": 11,
+    "categoria": "Sistemas Embarcados",
+    "pergunta": "No fascinante mundo da medicina, o Doppler e os sistemas embarcados se unem para criar ferramentas inovadoras de diagnóstico. Imagine um sistema embarcado inovador, o DopplerScan, projetado para realizar exames de Doppler em tempo real. Equipado com sensores de última geração e algoritmos inteligentes, o DopplerScan promete revolucionar a medicina. Com relação a este contexto e sobre o conteúdo estudado, analise as asserções a seguir e a relação proposta entre elas:\n\nI.  O DopplerScan, por ser um sistema embarcado, combina microcontroladores eficientes com hardwares para atender às demandas via processamento de ondas mais simples.\n\nPORQUE\n\nII. Sistemas embarcados, como o DopplerScan, são projetados para otimizar o desempenho, o consumo de energia e o custo, utilizando hardwares específicos para cada tarefa e algoritmos eficientes para processamento de dados em tempo real.\n\nA respeito dessas asserções assinale a alternativa correta.",
+    "opcoes": [
+      {"letra": "A", "texto": "As asserções I e II são proposições verdadeiras, e a II é uma justificativa da I."},
+      {"letra": "B", "texto": "As asserções I e II são proposições verdadeiras, mas a II não é uma justificativa da I."},
+      {"letra": "C", "texto": "A asserção I é uma proposição falsa, e a II é uma proposição verdadeira."},
+      {"letra": "D", "texto": "As asserções I e II são falsas."},
+      {"letra": "E", "texto": "A asserção I é uma proposição verdadeira, e a II é uma proposição falsa."}
+    ],
+    "resposta": "C",
+    "explicacao": "A asserção I é falsa porque sistemas embarcados para Doppler não processam 'ondas mais simples' — eles processam sinais complexos em tempo real. A asserção II é verdadeira: sistemas embarcados são projetados para otimizar desempenho, consumo e custo com hardware específico e algoritmos eficientes."
+  },
+  {
+    "id": 12,
+    "categoria": "Arduino",
+    "pergunta": "Imagine uma plataforma Arduino como um explorador desbravando o mundo analógico. Dentre as diversas funções que são usadas nos sketches de programação Arduino, a função analogRead() é sua bússola, guiando-o na leitura de valores de sensores e sinais externos. Analise e assinale a alternativa correta a respeito da relação entre o valor digital obtido pela função analogRead() e a temperatura medida pelo sensor.",
+    "opcoes": [
+      {"letra": "A", "texto": "O valor digital é diretamente proporcional à temperatura, ou seja, quanto maior a temperatura, maior o valor será o valor digital mostrado no display."},
+      {"letra": "B", "texto": "O valor digital resultante na medição é inversamente proporcional à temperatura, ou seja, quanto maior o valor da temperatura, menor o valor digital."},
+      {"letra": "C", "texto": "A relação entre o valor digital e a temperatura é logarítmica, pequenas variações de temperatura resultam em grandes variações no valor digital."},
+      {"letra": "D", "texto": "A relação direta entre o valor digital e a temperatura é inexistente, pois o valor digital depende da tensão de alimentação e da resolução do ADC."},
+      {"letra": "E", "texto": "A relação entre o valor digital e a temperatura é exponencial, grandes variações de temperatura resultam em pequenas variações no valor digital."}
+    ],
+    "resposta": "D",
+    "explicacao": "O analogRead() retorna um valor digital proporcional à tensão de entrada (0-1023 para 10 bits). A relação com a temperatura depende do sensor (ex: NTC é não-linear), da tensão de referência e da resolução do ADC. Não há relação direta universal entre o valor digital e a temperatura."
+  },
+  {
+    "id": 13,
+    "categoria": "Energia Solar",
+    "pergunta": "Imagine um vilarejo remoto, Luz do Amanhã, cercado por paisagens exuberantes, mas sem acesso à rede elétrica. As casas são iluminadas por lamparinas a óleo, gerando fumaça e riscos à saúde. A escola local, sem energia, enfrenta dificuldades para oferecer educação de qualidade. Atualmente, um sistema embarcado no vilarejo, crucial para o monitoramento ambiental e comunicação com o mundo exterior, é alimentado por uma bateria de carro. Assinale a alternativa que recorda corretamente um motivo fundamental de troca do sistema de bateria por um sistema de energia solar.",
+    "opcoes": [
+      {"letra": "A", "texto": "Redução imediata dos custos com energia utilizado no cenário em questão."},
+      {"letra": "B", "texto": "Ausência de necessidade de mão de obra especializada para instalação."},
+      {"letra": "C", "texto": "Maior potência em Watts de consumo disponível para o sistema embarcado."},
+      {"letra": "D", "texto": "Simplicidade na instalação e manutenção do sistema em relação ao anterior."},
+      {"letra": "E", "texto": "Sustentabilidade, economia a longo prazo e independência energética."}
+    ],
+    "resposta": "E",
+    "explicacao": "A energia solar oferece sustentabilidade (fonte renovável), economia a longo prazo (sem custo de combustível/recarga) e independência energética (não depende de rede ou recarga externa). As outras opções são incorretas: custo imediato é alto, requer mão de obra especializada, potência depende do dimensionamento, e instalação não é trivial."
+  },
+  {
+    "id": 14,
+    "categoria": "Sistemas Embarcados",
+    "pergunta": "O mundo dos autônomos já é uma realidade. Há cidades onde carros autônomos deslizam pelas ruas, sensores captam cada detalhe do entorno, ou mesmo, drones zumbindo pelos céus, mapeando terrenos com precisão cirúrgica. Em ambos os casos, sistemas embarcados com medição operam silenciosamente nos bastidores, coletando dados cruciais para o bom funcionamento dessas maravilhas tecnológicas. Em sistemas embarcados, um sistema de medição atua como um maestro da informação, coletando e processando dados do mundo real para auxiliar na tomada de decisões críticas. Assinale a alternativa que recorda corretamente a função principal de um sistema de medição em um sistema embarcado.",
+    "opcoes": [
+      {"letra": "A", "texto": "Fornecer dados quantitativos sobre grandezas físicas do ambiente, como temperatura, pressão ou distância."},
+      {"letra": "B", "texto": "Armazenar dados históricos para consulta e análise via uma sistema embarcada para posterior processamento."},
+      {"letra": "C", "texto": "Realizar cálculos complexos e análises estatísticas para extrair insights dos dados coletados no ambiente."},
+      {"letra": "D", "texto": "Comunicar-se com outros sistemas e dispositivos, compartilhando as informações coletadas no ambiente."},
+      {"letra": "E", "texto": "Controlar e ajustar o comportamento do sistema embarcado no ambiente com base nos dados medidos."}
+    ],
+    "resposta": "A",
+    "explicacao": "A função principal de um sistema de medição é adquirir dados quantitativos sobre grandezas físicas (temperatura, pressão, distância, etc.) do ambiente. Armazenamento, análise estatística, comunicação e controle são funções de outros subsistemas."
+  },
+  {
+    "id": 15,
+    "categoria": "Metrologia",
+    "pergunta": "Sistemas embarcados são computadores integrados em dispositivos específicos, como microcontroladores, para executar tarefas definidas. A precisão e confiabilidade das medições realizadas por esses sistemas são cruciais para o seu bom funcionamento. A compreensão dos conceitos de medição, medidas e erros é fundamental para o desenvolvimento e a aplicação de sistemas embarcados em diversas áreas, como automação, controle e robótica.\n\nCom relação ao contexto anterior e o material estudado, observe as afirmativas a seguir:\n\nI.   A medição é o processo de determinar o valor de uma grandeza física, utilizando instrumentos e métodos adequados\nII.  As medidas obtidas em um sistema embarcado em um determinado ambiente são sempre precisas e livres de erros.\nIII. A calibração de instrumentos de medição é um procedimento fundamental para minimizar erros sistemáticos.\n\nEstá correto o que se afirma em:",
+    "opcoes": [
+      {"letra": "A", "texto": "I, apenas."},
+      {"letra": "B", "texto": "II e III, apenas."},
+      {"letra": "C", "texto": "I, II e III."},
+      {"letra": "D", "texto": "I e III, apenas."},
+      {"letra": "E", "texto": "I e II, apenas."}
+    ],
+    "resposta": "D",
+    "explicacao": "I é verdadeira: medição é determinar valor de grandeza física com instrumentos adequados. II é falsa: nenhuma medida é livre de erros (existem erros aleatórios e sistemáticos). III é verdadeira: calibração minimiza erros sistemáticos comparando com padrões de referência."
+  },
+  {
+    "id": 16,
+    "categoria": "Metrologia",
+    "pergunta": "Em sistemas embarcados, a acurácia e a precisão das medições são fundamentais para garantir a confiabilidade do sistema e a qualidade dos resultados obtidos. As decisões tomadas com base nas medições dependem da fidelidade com que elas representam a realidade. Com relação ao contexto anterior e o material estudado, observe as afirmativas a seguir:\n\nI.   A acurácia indica a proximidade do valor medido com o valor real, enquanto a precisão indica a dispersão dos valores medidos entre si.\nII.  A histerese pode afetar a acurácia e a precisão das medições, pois o valor medido depende da trajetória anterior do sinal de entrada   \nIII. Um sistema embarcado com alta precisão, mas baixa acurácia, pode ser suficiente para algumas aplicações, como em jogos eletrônicos.\n\nEstá correto o que se afirma em:",
+    "opcoes": [
+      {"letra": "A", "texto": "I e III, apenas."},
+      {"letra": "B", "texto": "II e III, apenas."},
+      {"letra": "C", "texto": "I, apenas."},
+      {"letra": "D", "texto": "I, II e III."},
+      {"letra": "E", "texto": "I e II, apenas."}
+    ],
+    "resposta": "E",
+    "explicacao": "I é verdadeira: acurácia = proximidade do valor real; precisão = repetibilidade/dispersão. II é verdadeira: histerese causa diferença na leitura dependendo da direção da variação, afetando ambas. III é falsa: baixa acurácia significa viés sistemático, inadequado mesmo para jogos onde a precisão relativa importa."
+  },
+  {
+    "id": 17,
+    "categoria": "Sistemas Embarcados",
+    "pergunta": "Em um mundo onde a informação reina suprema, a precisão dos dados coletados se torna a bússola que nos guia para decisões acertadas. No universo dos sistemas embarcados, onde dispositivos interagem com o mundo real, a medição assume papel crucial, além de ser fundamental para que o robô tome decisões corretas e cumpra sua missão sem percalços. Em sistemas embarcados, assinale a alternativa que reconhece corretamente a medição.",
+    "opcoes": [
+      {"letra": "A", "texto": "A interpretação dos dados coletados, contextualizando-os com base no conhecimento do sistema."},
+      {"letra": "B", "texto": "A representação numérica da grandeza física medida, expressa em unidades adequadas como graus."},
+      {"letra": "C", "texto": "O processo de aquisição de informações do mundo real por meio de sensores e conversores."},
+      {"letra": "D", "texto": "A incerteza inerente ao processo de medição, resultante de erros e limitações dos instrumentos."},
+      {"letra": "E", "texto": "A comparação da grandeza física medida com um padrão de referência previamente definido."}
+    ],
+    "resposta": "C",
+    "explicacao": "Medição é o processo de obter informações do mundo real via sensores e conversores (ADC). A é interpretação, B é o resultado (medida), D é incerteza, E é calibração/verificação."
+  },
+  {
+    "id": 18,
+    "categoria": "Eletrônica",
+    "pergunta": "Imagine um sistema embarcado inovador, o EcoMonitor, projetado para monitorar a qualidade do ar em tempo real. Equipado com sensores precisos e um microcontrolador inteligente, o EcoMonitor precisa de energia para funcionar e realizar suas tarefas hercúleas. O sistema opera por 5 dias ininterruptos, 24 horas por dia, consumindo 13 mA. Assinale a alternativa correta que recorda um valor de uma bateria que pode alimentar esse sistema embarcado no cenário proposto.",
+    "opcoes": [
+      {"letra": "A", "texto": "Pilhas lítio AAA entre 500 mAh a 1000 mAh, calculadas como 13 mA × 60 h = 780 mAh."},
+      {"letra": "B", "texto": "Pilhas de lítio AAA entre 600 mAh e 1200 mAh, calculadas como 13 mA×80 h = 1040 mAh."},
+      {"letra": "C", "texto": "Pilhas alcalinas AAA entre 800 mAh a 1000 mAh, calculadas como 13 mA × 75 h = 975 mAh."},
+      {"letra": "D", "texto": "Pilhas alcalinas AAA entre 700 mAh e 1000 mAh, calculadas como 13 mA × 70 h = 910 mAh."},
+      {"letra": "E", "texto": "Pilhas de lítio AAA entre 800 mAh e 2000 mAh, calculadas como 13 mA × 120 h = 1560 mAh."}
+    ],
+    "resposta": "E",
+    "explicacao": "5 dias × 24 h = 120 h. Consumo = 13 mA × 120 h = 1560 mAh. Pilhas de lítio AAA têm capacidade típica 800-2000 mAh, adequadas. Pilhas alcalinas AAA têm ~1000 mAh, insuficientes para 1560 mAh."
+  },
+  {
+    "id": 19,
+    "categoria": "Arduino",
+    "pergunta": "Um Arduino como um robô em uma missão crucial: executar um código complexo com rapidez e precisão. Mas o tempo é curto e cada ciclo de instrução é precioso. Para tal programação na plataforma Arduino, há necessidade de otimização de código para aumentar a velocidade de execução do sketch. Com relação a este contexto e sobre o conteúdo estudado, analise as asserções a seguir e a relação proposta entre elas:\n\nI.  Usar o tipo de dado byte em vez de int para variáveis é uma otimização para aumentar a velocidade de execução do código Arduino.\n\nPORQUE\n\nII. Declarar variáveis de pino como constantes melhora a legibilidade do código, ou seja, torna o código mais fácil de entender e modificar, pois o valor do pino não pode ser alterado acidentalmente.\n\nA respeito dessas asserções assinale a alternativa correta.",
+    "opcoes": [
+      {"letra": "A", "texto": "As asserções I e II são proposições verdadeiras, mas a II não é uma justificativa da I."},
+      {"letra": "B", "texto": "A asserção I é uma proposição falsa, e a II é uma proposição verdadeira."},
+      {"letra": "C", "texto": "As asserções I e II são falsas."},
+      {"letra": "D", "texto": "As asserções I e II são proposições verdadeiras, e a II é uma justificativa da I."},
+      {"letra": "E", "texto": "A asserção I é uma proposição verdadeira, e a II é uma proposição falsa."}
+    ],
+    "resposta": "A",
+    "explicacao": "I é verdadeira: byte (8 bits) é mais rápido que int (16 bits) no AVR de 8 bits. II é verdadeira: const melhora legibilidade e evita alteração acidental. Mas II não justifica I — são otimizações independentes (tipo de dado vs. constância)."
+  },
+  {
+    "id": 20,
+    "categoria": "Eletrotécnica",
+    "pergunta": "Um robô futurista, o RoboStar 3000, está pronto para revolucionar o mundo com sua inteligência artificial e força bruta. Para operar em sua máxima capacidade, ele precisa de um fluxo constante de energia. Esse impressionante robô eletrônico consome 2500 Watts de potência e é alimentado por uma tensão de 220 Volts. Analise e assinale a alternativa correta que recorda o valor da corrente elétrica que passa pelo fio do robô quando está sendo carregado na tomada.",
+    "opcoes": [
+      {"letra": "A", "texto": "2500 W ÷ 220 V = 11,21 A."},
+      {"letra": "B", "texto": "2500 W ÷ 220 V = 11,57 A."},
+      {"letra": "C", "texto": "2500 W ÷ 220 V = 11,19 A."},
+      {"letra": "D", "texto": "2500 W ÷ 220 V = 11,33 A."},
+      {"letra": "E", "texto": "2500 W ÷ 220 V = 11,36 A."}
+    ],
+    "resposta": "E",
+    "explicacao": "Lei de potência: $P = V \\times I$, logo $I = P / V = 2500 / 220 = 11,3636... \\approx 11,36 \\, \\text{A}$."
+  },
+  {
+    "id": 21,
+    "categoria": "Arduino",
+    "pergunta": "O Arduino é uma plataforma de prototipagem eletrônica de código aberto, amplamente utilizada em projetos de robótica, automação e Internet das Coisas (IoT). O consumo de energia é um fator crucial a ser considerado ao projetar um sistema com Arduino, especialmente em projetos que operam com baterias ou fontes de alimentação limitadas.\n\nCom base no texto anterior, e no consumo de corrente das placas Arduino, associe corretamente a amperagem com a placa Arduino. Considere que nem todos os itens das colunas podem possuir associação ou podem possuir mais de uma correlação.\n\nAmperagem    Placa\nI.    47 mA    A. Mini Pro (3,3V direto)\nII.   42 mA    B. Uno (5V USB)\nIII.  8  mA    C. Mini Pro (5V USB) \nIV.   22 mA    D. Leonardo (5V USB)\n\nAssinale a alternativa que contém a associação correta:",
+    "opcoes": [
+      {"letra": "A", "texto": "I-C; II-A; III-D; IV-B."},
+      {"letra": "B", "texto": "I-B; II-D; III-A; IV-C."},
+      {"letra": "C", "texto": "I-A; II-C; III-B; IV-D."},
+      {"letra": "D", "texto": "I-B; II-A; III-D; IV-C."},
+      {"letra": "E", "texto": "I-D; II-B; III-C; IV-A."}
+    ],
+    "resposta": "B",
+    "explicacao": "Consumo típico: Uno (USB) ~42 mA, Leonardo (USB) ~47 mA, Mini Pro 3.3V (direto) ~8 mA, Mini Pro 5V (USB) ~22 mA. Logo: I→B, II→D, III→A, IV→C."
+  },
+  {
+    "id": 22,
+    "categoria": "Energia",
+    "pergunta": "Em um mundo cada vez mais consciente da sustentabilidade e da eficiência energética, a compreensão do consumo de energia se torna crucial para diversos setores, desde a indústria e o comércio até a gestão residencial e individual. A medição precisa do consumo de energia e a capacidade de estimar o consumo futuro são ferramentas essenciais para otimizar o uso da energia e reduzir custos. Com base nos conceitos aprendidos sobre consumo, medição, potência e estimativa de consumo em sistemas embarcados, associe corretamente o termo com a respectiva definição. Considere que nem todos os itens das colunas podem possuir associação ou podem possuir mais de uma correlação.\n\nTermo                        Definição\nI.   Consumo de energia        A. Cálculo aproximado do consumo de energia futuro, com base em dados históricos e projeções\nII.  Medição de consumo        B. Quantidade de energia utilizada em um determinado período de tempo\nIII. Estimativa de consumo  C. Medida instantânea da taxa de transferência de energia uso para especificar dispositivos elétricos       \nIV.  Potência                D. Processo de quantificar a energia consumida por um dispositivo ou sistema\n\nAssinale a alternativa que contém a associação correta.",
+    "opcoes": [
+      {"letra": "A", "texto": "I-A; II-C; III-B; IV-D."},
+      {"letra": "B", "texto": "I-B; II-A; III-D; IV-C."},
+      {"letra": "C", "texto": "I-D; II-B; III-C; IV-A."},
+      {"letra": "D", "texto": "I-C; II-A; III-D; IV-B."},
+      {"letra": "E", "texto": "I-B; II-D; III-A; IV-C."}
+    ],
+    "resposta": "E",
+    "explicacao": "I→B: Consumo = energia usada num período. II→D: Medição = processo de quantificar energia consumida. III→A: Estimativa = cálculo aproximado futuro baseado em histórico. IV→C: Potência = taxa instantânea de transferência de energia."
   }
 ]
