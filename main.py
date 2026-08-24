@@ -24,15 +24,18 @@ QUESTOES_PATH = BASE_DIR / "questoes.json"
 # ---------------------------------------------------------------------------
 
 _GREEK_MAP: dict[str, str] = {
+    # Letras gregas
     r"\alpha": "alfa",
     r"\beta": "beta",
     r"\gamma": "gama",
     r"\delta": "delta",
     r"\Delta": "delta maiúsculo",
     r"\epsilon": "épsilon",
+    r"\varepsilon": "épsilon",
     r"\zeta": "zeta",
     r"\eta": "eta",
     r"\theta": "teta",
+    r"\vartheta": "teta",
     r"\Theta": "teta maiúsculo",
     r"\iota": "iota",
     r"\kappa": "kapa",
@@ -43,12 +46,16 @@ _GREEK_MAP: dict[str, str] = {
     r"\xi": "xi",
     r"\Xi": "xi maiúsculo",
     r"\pi": "pi",
+    r"\varpi": "pi",
     r"\Pi": "pi maiúsculo",
     r"\rho": "ro",
+    r"\varrho": "ro",
     r"\sigma": "sigma",
+    r"\varsigma": "sigma",
     r"\Sigma": "sigma maiúsculo",
     r"\tau": "tau",
     r"\phi": "fi",
+    r"\varphi": "fi",
     r"\Phi": "fi maiúsculo",
     r"\chi": "qui",
     r"\psi": "psi",
@@ -69,6 +76,74 @@ _GREEK_MAP: dict[str, str] = {
     r"\sinh": "seno hiperbólico",
     r"\cosh": "cosseno hiperbólico",
     r"\tanh": "tangente hiperbólica",
+
+    # Logaritmos
+    r"\log": "logaritmo",
+    r"\ln": "logaritmo natural",
+    r"\lg": "logaritmo base 10",
+    r"\log_": "logaritmo base ",
+
+    # Funções elementares
+    r"\exp": "exponencial",
+    r"\lim": "limite",
+    r"\limsup": "limite superior",
+    r"\liminf": "limite inferior",
+    r"\max": "máximo",
+    r"\min": "mínimo",
+    r"\sup": "supremo",
+    r"\inf": "ínfimo",
+    r"\det": "determinante",
+    r"\tr": "traço",
+    r"\dim": "dimensão",
+    r"\ker": "núcleo",
+    r"\im": "imagem",
+    r"\deg": "grau",
+    r"\arg": "argumento",
+    r"\Re": "parte real",
+    r"\Im": "parte imaginária",
+
+    # Operadores grandes (somatórios, integrais, etc.)
+    r"\sum": "soma",
+    r"\prod": "produto",
+    r"\int": "integral",
+    r"\iint": "integral dupla",
+    r"\iiint": "integral tripla",
+    r"\oint": "integral de contorno",
+    r"\coprod": "coproduto",
+    r"\bigoplus": "soma direta",
+    r"\bigotimes": "produto tensorial",
+    r"\bigcup": "união",
+    r"\bigcap": "interseção",
+    r"\bigsqcup": "união disjunta",
+    r"\bigvee": "ou lógico",
+    r"\bigwedge": "e lógico",
+
+    # Conjuntos numéricos comuns
+    r"\mathbb{R}": "R",
+    r"\mathbb{N}": "N",
+    r"\mathbb{Z}": "Z",
+    r"\mathbb{Q}": "Q",
+    r"\mathbb{C}": "C",
+    r"\mathbb{H}": "H",
+    r"\mathbb{P}": "P",
+    r"\mathcal": "caligráfico ",
+    r"\mathfrak": "gótico ",
+    r"\mathbf": "negrito ",
+    r"\mathrm": "romano ",
+    r"\mathit": "itálico ",
+
+    # Derivadas parciais
+    r"\partial": "parcial",
+
+    # Raízes enésimas
+    r"\sqrt[": "raiz índice ",
+
+    # Binomial
+    r"\binom": "binomial",
+    r"\choose": "escolher",
+
+    # Fatorial
+    r"\!": "",  # espaço negativo - ignorar
 }
 
 
@@ -79,14 +154,72 @@ def _sanitize_latex_for_speech(text: str) -> str:
     out = re.sub(r"\$\$(.+?)\$\$", r"\1", text, flags=re.DOTALL)
     out = re.sub(r"\$(.+?)\$", r"\1", out)
 
-    # 2. Remover environments LaTeX (aligned, cases …)
+    # 2. Remover environments LaTeX (aligned, cases, matrix, array, etc.)
+    # Captura ambientes de matriz antes de remover
+    out = re.sub(r"\\begin\{(p|b|B|v|V|small)matrix\}", "", out)
+    out = re.sub(r"\\end\{(p|b|B|v|V|small)matrix\}", "", out)
+    # Remove outros environments
     out = re.sub(r"\\begin\{[^}]+\}", "", out)
     out = re.sub(r"\\end\{[^}]+\}", "", out)
+
+    # 2b. Remover & e \\ de matrizes
+    out = re.sub(r"&", " , ", out)
+    out = re.sub(r"\\\\", " ; ", out)
 
     # 2b. Remover \text{...} mantendo o conteúdo (deve vir ANTES de \frac)
     out = re.sub(r"\\text\{([^{}]+)\}", r"\1", out)
 
-    # 3. Comandos com dois argumentos: \frac{a}{b} \to "a sobre b"
+    # 2c. Remover \left / \right
+    out = re.sub(r"\\left", "", out)
+    out = re.sub(r"\\right", "", out)
+
+    # 2d. Norma: \|x\| -> "norma de x" (antes do symbol_map para não duplicar)
+    out = re.sub(r"\\\|([^|]+)\\\|", r"norma de \1", out)
+
+    # 2e. Produto interno: \langle u, v \rangle -> "produto interno de u e v"
+    out = re.sub(r"\\langle\s*([^,]+)\s*,\s*([^>]+)\s*\\rangle", r"produto interno de \1 e \2", out)
+
+    # 2f. \pmod / \mod -> "módulo n"
+    out = re.sub(r"\\pmod\s*\{([^}]+)\}", r"módulo \1", out)
+    out = re.sub(r"\\pmod\s+([a-zA-Z0-9]+)", r"módulo \1", out)
+    out = re.sub(r"\\mod\s+([a-zA-Z0-9]+)", r"módulo \1", out)
+
+    # 2d. Raízes enésimas: \sqrt[n]{x} -> "raiz índice n de x"
+    out = re.sub(r"\\sqrt\[([^\]]+)\]\{([^{}]+)\}", r"raiz índice \1 de \2", out)
+
+    # 2e. Binomial: \binom{n}{k} -> "binomial n k"
+    out = re.sub(r"\\binom\{([^{}]+)\}\{([^{}]+)\}", r"binomial \1 \2", out)
+    out = re.sub(r"\\choose\{([^{}]+)\}\{([^{}]+)\}", r"\1 escolher \2", out)
+
+    # 2f. Logaritmos com base: \log_a b -> "logaritmo de b na base a"
+    out = re.sub(r"\\log_\{?([^{}]+)\}?\s*([a-zA-Z0-9]+)", r"logaritmo de \2 na base \1", out)
+    out = re.sub(r"\\log\s+([a-zA-Z0-9]+)", r"logaritmo de \1", out)
+    out = re.sub(r"\\ln\s+([a-zA-Z0-9]+)", r"logaritmo natural de \1", out)
+    out = re.sub(r"\\lg\s+([a-zA-Z0-9]+)", r"logaritmo base 10 de \1", out)
+
+    # 2g. Limites: \lim_{x \to a} -> "limite quando x tende a a"
+    out = re.sub(r"\\lim_\{([^}]+)\}", r"limite quando \1", out)
+    out = re.sub(r"\\lim\s+", "limite ", out)
+
+    # 2h. Integrais com limites: \int_a^b -> "integral de a até b"
+    out = re.sub(r"\\int_\{([^}]+)\}\^\{([^}]+)\}", r"integral de \1 até \2", out)
+    out = re.sub(r"\\int_([^ ]+)\^([^ ]+)", r"integral de \1 até \2", out)
+    out = re.sub(r"\\iint", "integral dupla", out)
+    out = re.sub(r"\\iiint", "integral tripla", out)
+    out = re.sub(r"\\oint", "integral de contorno", out)
+    out = re.sub(r"\\int", "integral", out)
+
+    # 2i. Somatórios com limites: \sum_{i=1}^n -> "soma de i igual a 1 até n"
+    out = re.sub(r"\\sum_\{([^}]+)\}\^\{([^}]+)\}", r"soma de \1 até \2", out)
+    out = re.sub(r"\\sum_([^ ]+)\^([^ ]+)", r"soma de \1 até \2", out)
+    out = re.sub(r"\\sum", "soma", out)
+    out = re.sub(r"\\prod_\{([^}]+)\}\^\{([^}]+)\}", r"produto de \1 até \2", out)
+    out = re.sub(r"\\prod", "produto", out)
+
+    # 2j. Derivadas parciais: \frac{\partial f}{\partial x} -> "parcial f sobre parcial x"
+    # (o \frac já trata, só garantir que \partial -> "parcial")
+
+    # 3. Comandos com dois argumentos: \frac{a}{b} -> "a sobre b"
     out = re.sub(r"\\frac\{([^{}]+)\}\{([^{}]+)\}", r"\1 sobre \2", out)
 
     # 4. Comandos com um argumento: \sqrt{x} \to "raiz quadrada de x"
@@ -109,25 +242,95 @@ def _sanitize_latex_for_speech(text: str) -> str:
     out = re.sub(r"([A-Za-z0-9])\^\{([^{}]+)\}", _power_repl, out)
     out = re.sub(r"([A-Za-z0-9])\^(\w)", _power_repl, out)
 
+    # 6b. Floor e Ceiling: \lfloor x \rfloor -> "piso de x", \lceil x \rceil -> "teto de x"
+    out = re.sub(r"\\lfloor\s*([^\\]+)\s*\\rfloor", r"piso de \1", out)
+    out = re.sub(r"\\lceil\s*([^\\]+)\s*\\rceil", r"teto de \1", out)
+
+    # 6c. Fatorial: n! -> "n fatorial" (mas não confundir com negação lógica)
+    # Fatorial aparece após número ou variável, não após operador relacional
+    # Múltiplos ! (fatorial duplo, triplo) -> "n fatorial duplo", etc.
+    def _factorial_repl(m: re.Match) -> str:
+        base = m.group(1)
+        excl_count = len(m.group(0)) - len(base)
+        if excl_count == 1:
+            return f"{base} fatorial"
+        elif excl_count == 2:
+            return f"{base} fatorial duplo"
+        elif excl_count == 3:
+            return f"{base} fatorial triplo"
+        else:
+            return f"{base} fatorial {excl_count} vezes"
+
+    out = re.sub(r"([a-zA-Z0-9\)\]\}])\s*!+", _factorial_repl, out)
+
     # 7. Letras gregas
     for cmd, spoken in sorted(_GREEK_MAP.items(), key=lambda x: -len(x[0])):
         out = out.replace(cmd, spoken)
 
     # 8. Operadores e símbolos
     symbol_map = [
+        # Aritméticos
         (r"\cdot", " vezes "),
         (r"\times", " vezes "),
         (r"\div", " dividido "),
         (r"\pm", " mais ou menos "),
         (r"\mp", " menos ou mais "),
+
+        # Relacionais
         (r"\neq", " diferente de "),
         (r"\ne", " diferente de "),
         (r"\leq", " menor ou igual a "),
         (r"\le", " menor ou igual a "),
         (r"\geq", " maior ou igual a "),
         (r"\ge", " maior ou igual a "),
+        (r"\ll", " muito menor que "),
+        (r"\gg", " muito maior que "),
         (r"\approx", " aproximadamente igual a "),
         (r"\equiv", " equivalente a "),
+        (r"\sim", " semelhante a "),
+        (r"\simeq", " semelhante a "),
+        (r"\cong", " congruente a "),
+        (r"\propto", " proporcional a "),
+
+        # Lógicos
+        (r"\land", " e "),
+        (r"\lor", " ou "),
+        (r"\lnot", " não "),
+        (r"\neg", " não "),
+        (r"\implies", " implica "),
+        (r"\Rightarrow", " implica "),
+        (r"\iff", " se e somente se "),
+        (r"\Leftrightarrow", " se e somente se "),
+        (r"\forall", " para todo "),
+        (r"\exists", " existe "),
+        (r"\nexists", " não existe "),
+
+        # Conjuntos
+        (r"\in", " pertence a "),
+        (r"\notin", " não pertence a "),
+        (r"\subset", " subconjunto de "),
+        (r"\subseteq", " subconjunto ou igual a "),
+        (r"\supset", " superconjunto de "),
+        (r"\supseteq", " superconjunto ou igual a "),
+        (r"\cup", " união "),
+        (r"\cap", " intersecção "),
+        (r"\setminus", " diferença "),
+        (r"\complement", " complementar "),
+        (r"\emptyset", " conjunto vazio "),
+        (r"\varnothing", " conjunto vazio "),
+
+        # Setas
+        (r"\to", " tende a "),
+        (r"\rightarrow", " tende a "),
+        (r"\leftarrow", " vem de "),
+        (r"\mapsto", " mapeia em "),
+        (r"\uparrow", " tende a infinito "),
+        (r"\downarrow", " tende a menos infinito "),
+
+        # Composição e outros operadores
+        (r"\circ", " composto com "),
+
+        # Outros
         (r"\infty", " infinito "),
         (r"\pi", " pi "),
         (r"\%", " por cento "),
@@ -136,6 +339,28 @@ def _sanitize_latex_for_speech(text: str) -> str:
         (r"-", " menos "),
         (r"'", " linha "),
         (r"\prime", " linha "),
+
+        # Acentos comuns
+        (r"\hat", " chapéu "),
+        (r"\tilde", " til "),
+        (r"\bar", " barra "),
+        (r"\vec", " vetor "),
+        (r"\overrightarrow", " vetor "),
+        (r"\dot", " ponto "),
+        (r"\ddot", " dois pontos "),
+
+        # Delimitadores - floor/ceiling são tratados antes via regex
+        (r"\langle", " produto interno "),
+        (r"\rangle", " produto interno "),
+        (r"\|", " norma "),
+
+        # Espaços
+        (r"\quad", " "),
+        (r"\qquad", " "),
+        (r"\,", " "),
+        (r"\:", " "),
+        (r"\;", " "),
+        (r"\!", ""),
     ]
     for pattern, spoken in symbol_map:
         out = out.replace(pattern, spoken)
