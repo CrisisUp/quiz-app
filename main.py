@@ -83,6 +83,9 @@ def _sanitize_latex_for_speech(text: str) -> str:
     out = re.sub(r"\\begin\{[^}]+\}", "", out)
     out = re.sub(r"\\end\{[^}]+\}", "", out)
 
+    # 2b. Remover \text{...} mantendo o conteúdo (deve vir ANTES de \frac)
+    out = re.sub(r"\\text\{([^{}]+)\}", r"\1", out)
+
     # 3. Comandos com dois argumentos: \frac{a}{b} \to "a sobre b"
     out = re.sub(r"\\frac\{([^{}]+)\}\{([^{}]+)\}", r"\1 sobre \2", out)
 
