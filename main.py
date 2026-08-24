@@ -144,6 +144,59 @@ _GREEK_MAP: dict[str, str] = {
 
     # Fatorial
     r"\!": "",  # espaço negativo - ignorar
+
+    # Unidades SI comuns (para conversão antes do / genérico)
+    r"\meter": "metro",
+    r"\metre": "metro",
+    r"\m": "metro",
+    r"\second": "segundo",
+    r"\s": "segundo",
+    r"\kilogram": "quilograma",
+    r"\kg": "quilograma",
+    r"\gram": "grama",
+    r"\g": "grama",
+    r"\newton": "newton",
+    r"\N": "newton",
+    r"\joule": "joule",
+    r"\J": "joule",
+    r"\watt": "watt",
+    r"\W": "watt",
+    r"\coulomb": "coulomb",
+    r"\C": "coulomb",
+    r"\volt": "volt",
+    r"\V": "volt",
+    r"\ampere": "ampere",
+    r"\A": "ampere",
+    r"\ohm": "ohm",
+    r"\farad": "farad",
+    r"\F": "farad",
+    r"\henry": "henry",
+    r"\H": "henry",
+    r"\hertz": "hertz",
+    r"\Hz": "hertz",
+    r"\pascal": "pascal",
+    r"\Pa": "pascal",
+    r"\lumen": "lumen",
+    r"\lm": "lumen",
+    r"\lux": "lux",
+    r"\lx": "lux",
+    r"\becquerel": "becquerel",
+    r"\Bq": "becquerel",
+    r"\gray": "gray",
+    r"\Gy": "gray",
+    r"\sievert": "sievert",
+    r"\Sv": "sievert",
+    r"\katal": "katal",
+    r"\kat": "katal",
+    r"\degree": "grau",
+    r"\celsius": "grau celsius",
+    r"\Celsius": "grau celsius",
+    r"\kelvin": "kelvin",
+    r"\K": "kelvin",
+    r"\mole": "mol",
+    r"\mol": "mol",
+    r"\candela": "candela",
+    r"\cd": "candela",
 }
 
 
@@ -221,6 +274,52 @@ def _sanitize_latex_for_speech(text: str) -> str:
 
     # 3. Comandos com dois argumentos: \frac{a}{b} -> "a sobre b"
     out = re.sub(r"\\frac\{([^{}]+)\}\{([^{}]+)\}", r"\1 sobre \2", out)
+
+    # 3b. Unidades compostas (antes do / genérico)
+    # Padrões comuns: m/s, km/h, kg*m/s^2, N*m, J/s, etc.
+    # Substitui unidades conhecidas antes de processar / genérico
+    unit_patterns = [
+        # Temperatura (antes de C genérico)
+        (r"°\s*C", "graus celsius"),
+        # Aceleração
+        (r"m\s*/\s*s\s*\^\s*2", "metros por segundo ao quadrado"),
+        (r"m\s*/\s*s\s*\^2", "metros por segundo ao quadrado"),
+        (r"m\/s\^2", "metros por segundo ao quadrado"),
+        (r"kg\s*\*\s*m\s*/\s*s\s*\^\s*2", "newton"),  # kg*m/s^2 = N
+        # Velocidade
+        (r"m\s*/\s*s", "metros por segundo"),
+        (r"km\s*/\s*h", "quilômetros por hora"),
+        (r"cm\s*/\s*s", "centímetros por segundo"),
+        # Força/Energia/Potência
+        (r"N\s*\*\s*m", "newton metro"),
+        (r"J\s*/\s*s", "watts"),  # J/s = W
+        # Unidades simples COM NÚMERO antes (ex: "10 N", "5 m/s")
+        (r"(\d+(?:\.\d+)?)\s*m\b", r"\1 metros"),
+        (r"(\d+(?:\.\d+)?)\s*kg\b", r"\1 quilogramas"),
+        (r"(\d+(?:\.\d+)?)\s*s\b", r"\1 segundos"),
+        (r"(\d+(?:\.\d+)?)\s*W\b", r"\1 watts"),
+        (r"(\d+(?:\.\d+)?)\s*Pa\b", r"\1 pascals"),
+        (r"(\d+(?:\.\d+)?)\s*Hz\b", r"\1 hertz"),
+        (r"(\d+(?:\.\d+)?)\s*K\b", r"\1 kelvin"),
+        (r"(\d+(?:\.\d+)?)\s*C\b", r"\1 coulombs"),
+        (r"(\d+(?:\.\d+)?)\s*mol\b", r"\1 mol"),
+        (r"(\d+(?:\.\d+)?)\s*N\b", r"\1 newtons"),
+        (r"(\d+(?:\.\d+)?)\s*J\b", r"\1 joules"),
+        (r"(\d+(?:\.\d+)?)\s*V\b", r"\1 volts"),
+        (r"(\d+(?:\.\d+)?)\s*A\b", r"\1 amperes"),
+        (r"(\d+(?:\.\d+)?)\s*Ω\b", r"\1 ohms"),
+        (r"(\d+(?:\.\d+)?)\s*F\b", r"\1 farads"),
+        (r"(\d+(?:\.\d+)?)\s*H\b", r"\1 henrys"),
+        (r"(\d+(?:\.\d+)?)\s*Pa\b", r"\1 pascals"),
+        # Unidades compostas (sem número antes, mas padrão conhecido)
+        (r"\bm\s*/\s*s\b", "metros por segundo"),
+        (r"\bkm\s*/\s*h\b", "quilômetros por hora"),
+        (r"\bcm\s*/\s*s\b", "centímetros por segundo"),
+        (r"\bN\s*\*\s*m\b", "newton metro"),
+        (r"\bJ\s*/\s*s\b", "watts"),
+    ]
+    for pattern, spoken in unit_patterns:
+        out = re.sub(pattern, spoken, out, flags=re.IGNORECASE)
 
     # 4. Comandos com um argumento: \sqrt{x} \to "raiz quadrada de x"
     out = re.sub(r"\\sqrt\{([^{}]+)\}", r"raiz quadrada de \1", out)
