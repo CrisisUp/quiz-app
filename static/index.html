@@ -343,6 +343,29 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* ── Navigation Bar ────────────────────────────────────────────── */
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      flex-wrap: wrap;
+    }
+    .nav-bar .btn { flex-shrink: 0; }
+    .question-selector {
+      flex: 1;
+      min-width: 180px;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .question-selector select { flex: 1; }
+
     /* ── Responsive ───────────────────────────────────────────────── */
     @media (max-width: 520px) {
       body { padding: 1rem .6rem; }
@@ -384,7 +407,21 @@
     <div id="resultsState" class="results" style="display:none"></div>
   </main>
 
-  <!-- ═══ Controls ══════════════════════════════════════════════════ -->
+  <!-- ═══ Navigation ═════════════════════════════════════════════════ -->
+  <div class="nav-bar" id="navBar" style="display:none">
+    <button class="btn" id="btnPrev" title="Questão anterior (←)" disabled>
+      ← Anterior
+    </button>
+    <div class="question-selector">
+      <label for="questionSelect" style="font-size:0.8rem;color:var(--muted)">Ir para:</label>
+      <select id="questionSelect" style="padding:0.4rem 0.6rem;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:0.85rem"></select>
+    </div>
+    <button class="btn" id="btnNextNav" title="Próxima questão (→)">
+      Próxima →
+    </button>
+  </div>
+
+  <!-- ═══ Controls ═════════════════════════════════════════════════ -->
   <div class="controls" id="controls" style="display:none">
     <button class="btn" id="btnSpeak" title="Ouvir a questão (R)">
       🔊 Ouvir <kbd>R</kbd>
@@ -428,6 +465,9 @@
     const $btnStop     = document.getElementById("btnStop");
     const $btnConfirm  = document.getElementById("btnConfirm");
     const $btnNext     = document.getElementById("btnNext");
+    const $btnPrev     = document.getElementById("btnPrev");
+    const $btnNextNav  = document.getElementById("btnNextNav");
+    const $questionSel = document.getElementById("questionSelect");
     const $audio       = document.getElementById("audioPlayer");
 
     /* ── State ────────────────────────────────────────────────────── */
@@ -493,10 +533,13 @@
       $results.style.display = "none";
       $controls.style.display = "flex";
       $hint.style.display = "block";
+      $navBar.style.display = "flex";
 
       $btnConfirm.style.display = "inline-flex";
       $btnConfirm.disabled = true;
       $btnNext.style.display    = "none";
+
+      updateNavigation();
 
       let html = `<div class="category">${q.categoria}</div>`;
       html += `<div class="question-text">${q.pergunta}</div>`;
@@ -521,6 +564,38 @@
       });
 
       updateProgress();
+    }
+
+    /* ── Navigation ─────────────────────────────────────────────────── */
+    function updateNavigation() {
+      $btnPrev.disabled = idx === 0;
+      $btnNextNav.disabled = idx === questoes.length - 1;
+      $questionSel.value = idx;
+    }
+
+    function goToQuestion(newIdx) {
+      if (newIdx < 0 || newIdx >= questoes.length) return;
+      idx = newIdx;
+      render();
+    }
+
+    function prevQuestion() {
+      if (idx > 0) goToQuestion(idx - 1);
+    }
+
+    function nextQuestionNav() {
+      if (idx < questoes.length - 1) goToQuestion(idx + 1);
+    }
+
+    function populateQuestionSelector() {
+      $questionSel.innerHTML = "";
+      questoes.forEach((q, i) => {
+        const opt = document.createElement("option");
+        opt.value = i;
+        opt.textContent = `${i + 1}. ${q.categoria}`;
+        $questionSel.appendChild(opt);
+      });
+      $questionSel.value = idx;
     }
 
     /* ── Select / Confirm ─────────────────────────────────────────── */
@@ -645,6 +720,14 @@
         if (answered) nextQuestion();
         else          confirmAnswer();
       }
+      if (k === "ARROWLEFT" || k === "LEFT") {
+        e.preventDefault();
+        prevQuestion();
+      }
+      if (k === "ARROWRIGHT" || k === "RIGHT") {
+        e.preventDefault();
+        nextQuestionNav();
+      }
     });
 
     /* ── Button handlers ──────────────────────────────────────────── */
@@ -652,6 +735,9 @@
     $btnStop.addEventListener("click",  stopAudio);
     $btnConfirm.addEventListener("click", confirmAnswer);
     $btnNext.addEventListener("click", nextQuestion);
+    $btnPrev.addEventListener("click", prevQuestion);
+    $btnNextNav.addEventListener("click", nextQuestionNav);
+    $questionSel.addEventListener("change", (e) => goToQuestion(parseInt(e.target.value, 10)));
 
     /* ── Init ─────────────────────────────────────────────────────── */
     (async () => {
@@ -659,6 +745,7 @@
         const res = await fetch("/api/questoes");
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         questoes = await res.json();
+        populateQuestionSelector();
         updateScore();
         render();
       } catch (err) {
