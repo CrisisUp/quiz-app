@@ -30,7 +30,7 @@ const QuizApp = (() => {
             CONFIRM: "ENTER",
             PREV: ["ARROWLEFT", "LEFT"],
             NEXT: ["ARROWRIGHT", "RIGHT"],
-        },
+        }),
 
         // TTS
         TTS: {
@@ -57,6 +57,8 @@ const QuizApp = (() => {
             AUDIO_PLAYER: "#audioPlayer",
             OPTIONS_LIST: "#optionsList",
             EXPLANATION: "#explanation",
+            OPTIONS_LIST: "#optionsList",
+            EXPLANATION: "#explanation",
         },
 
         // CSS Classes
@@ -69,7 +71,7 @@ const QuizApp = (() => {
             EXPLANATION: "explanation",
             CORRECT_EXPL: "correct-expl",
             WRONG_EXPL: "wrong-expl",
-        },
+        }),
 
         // Audio
         Audio: {
@@ -112,6 +114,8 @@ const QuizApp = (() => {
         dom.btnNextNav = document.querySelector(selectors.BTN_NEXT_NAV);
         dom.questionSelect = document.querySelector(selectors.QUESTION_SELECT);
         dom.audio = document.querySelector(selectors.AUDIO_PLAYER);
+        dom.optionsList = document.querySelector(selectors.OPTIONS_LIST);
+        dom.explanation = document.querySelector(selectors.EXPLANATION);
         dom.hint = document.querySelector(Config.Selectors.HINT);
     }
 
@@ -770,17 +774,35 @@ const QuizApp = (() => {
 
     async function init() {
         try {
+            console.log('[QuizApp] Initializing...');
             // Cache DOM elements first
             cacheDomElements();
-
+            console.log('[QuizApp] DOM elements cached');
+            console.log('[QuizApp] dom.loading:', dom.loading);
+            console.log('[QuizApp] dom.quiz:', dom.quiz);
+            console.log('[QuizApp] dom.results:', dom.results);
+            console.log('[QuizApp] dom.toolbar:', dom.toolbar);
+            console.log('[QuizApp] dom.hint:', dom.hint);
+            console.log('[QuizApp] dom.btnConfirm:', dom.btnConfirm);
+            console.log('[QuizApp] dom.btnNextNav:', dom.btnNextNav);
+            console.log('[QuizApp] dom.btnPrev:', dom.btnPrev);
+            console.log('[QuizApp] dom.btnNextNav:', dom.btnNextNav);
+            console.log('[QuizApp] dom.questionSelect:', dom.questionSelect);
+            console.log('[QuizApp] dom.audio:', dom.audio);
+            console.log('[QuizApp] dom.optionsList:', dom.optionsList);
+            console.log('[QuizApp] dom.explanation:', dom.explanation);
             // Bind events
             bindEvents();
+            console.log('[QuizApp] Events bound');
 
             // Load questions
+            console.log('[QuizApp] Fetching questions from:', Config.API.QUESTOES);
             const response = await fetch(Config.API.QUESTOES);
+            console.log('[QuizApp] Fetch response status:', response.status, response.ok);
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
             state.questions = await response.json();
+            console.log('[QuizApp] Questions loaded:', state.questions.length);
 
             // Populate question selector
             populateQuestionSelector();
